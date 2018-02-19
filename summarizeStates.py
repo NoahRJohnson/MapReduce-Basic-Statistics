@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 from mrjob.job import MRJob
 import numpy as np
