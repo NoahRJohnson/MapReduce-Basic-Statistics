@@ -10,12 +10,16 @@ Calculate the variance in electricity prices among the states.
 Reads in a csv file with two variables per line, name of state and
 price per kilowatt hour.
 
-Uses the 
+Uses the:
 
 Var(X) = E(X^2) - E(X)^2
 
 formula to calculate variance in one pass of the data. The sample
 variance is estimated by using the sample mean of X in place of E(X).
+
+WARNING: This method is numerically unstable, as the sum of X^2 and the
+sum of X terms would not scale to big data levels. Catastrophic cancellation
+could occur.
 '''
 class MRElecVar(MRJob):
         
@@ -34,12 +38,6 @@ class MRElecVar(MRJob):
         pp_kwh = float(pp_kwh)
         
         yield np.random.randint(1, NUMBER_OF_FIRST_REDUCERS), (name, pp_kwh)
-        
-    '''
-    def reducer_init(self)
-        with open("electricity_mean.tmp", "r") as f:
-            self.mean =
-    '''
         
     '''
     Calculate partial means
