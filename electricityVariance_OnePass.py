@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from mrjob.job import MRJob
+from mrjob.step import MRStep
 import numpy as np
 import os
 
@@ -49,7 +50,7 @@ class MRElecVar(MRJob):
         
         for name, pp_kwh in values:
             total += pp_kwh
-            sqTotal += pp_kwh^2
+            sqTotal += pp_kwh**2
             nValues += 1
             
         avg = float(total) / nValues
@@ -73,15 +74,16 @@ class MRElecVar(MRJob):
         
         for avg, sqAvg, count in values:
             tmp = count * avg
+            sqTmp = count * sqAvg
             total += tmp
-            sqTotal += tmp^2
+            sqTotal += sqTmp
             n += count
             
         e_x = float(total) / n
         
         e_x_Sq = float(sqTotal) / n
         
-        var = e_x_Sq - e_x^2
+        var = e_x_Sq - e_x**2
         
         yield key, var
 
