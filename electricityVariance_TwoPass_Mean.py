@@ -11,7 +11,8 @@ among the states.
 
 This is MapReduce job 1 of 2 necessary to calculate the variance
 of electricity prices. This task is split up into two parts, to
-allow a more numerically stable computation of the variance.
+allow a more numerically stable computation of the variance. This
+part simply computes the mean of pp_kwh.
 '''
 class MRElecMean(MRJob):
     

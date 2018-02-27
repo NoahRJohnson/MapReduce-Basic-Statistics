@@ -7,12 +7,13 @@ import os
 
 '''
 Reads in a csv file with two variables per line, name of state and
-price per kilowatt hour. Outputs the mean in electricity prices 
+price per kilowatt hour. Outputs the variance in electricity prices 
 among the states. 
 
-This is MapReduce job 1 of 2 necessary to calculate the variance
+This is MapReduce job 2 of 2 necessary to calculate the variance
 of electricity prices. This task is split up into two parts, to
-allow a more numerically stable computation of the variance.
+allow a more numerically stable computation of the variance. The
+pp_kwh mean must be passed in via the jobconf parameter.
 '''
 class MRElecVar(MRJob):
     
