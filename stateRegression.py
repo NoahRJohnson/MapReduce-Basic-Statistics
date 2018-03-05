@@ -4,7 +4,6 @@ from mrjob.job import MRJob
 from mrjob.step import MRStep
 from mrjob.compat import jobconf_from_env
 import numpy as np
-import os
 
 '''
 Use linear regression to fit the following simple model:
@@ -46,7 +45,7 @@ class MRStateRegr(MRJob):
         area = int(area)
         pop = int(pop)
         
-        yield np.random.randint(1, NUMBER_OF_FIRST_REDUCERS), (pop, area)
+        yield np.random.randint(0, NUMBER_OF_FIRST_REDUCERS), (pop, area)
         
     # Load mean of response and predictor
     def reducer_init(self):

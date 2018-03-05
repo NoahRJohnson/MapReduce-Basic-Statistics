@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# The output is a '"states" dict', where dict is a Python dictionary converted
+# The output is '"states" dict', where dict is a Python dictionary converted
 # into a string.
 tmp=$(python summarizeStates.py Example\ Data/states_clean.csv)
 
