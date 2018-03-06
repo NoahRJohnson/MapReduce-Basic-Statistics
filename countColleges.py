@@ -18,21 +18,13 @@ in-state tuition,out-of-state tuition, room, board,
 add. fees, estim. book costs, estim. personal $,
 % fac. w/PHD, stud./fac. ratio, Graduation rate
 '''
-class MRCollegeRandomSample(MRJob):
-        
-    
-    def mapper_init(self):
-        self.numColleges = jobconf_from_env("my.job.settings.numColleges")
-        
-        self.numColleges = float(self.numColleges)
+
+PUBLIC_COLLEGE_CODE = 1
+PRIVATE_COLLEGE_CODE = 2
+
+class MRCollegeCount(MRJob):
 
     def mapper(self, _, line):
-        
-        # Expected number of observations in our sample
-        N_SAMPLE = 100
-        
-        # The probability we assign to each observation
-        p = float(N_SAMPLE) / self.numColleges
         
         # Use csv library to split the line on commas
         # (the library handles nasty edge cases for us)
@@ -47,10 +39,29 @@ class MRCollegeRandomSample(MRJob):
           inStateTuition, outStateTuition, room, board, \
           addFees, bookCosts, personalMoney, percFacPHD, \
           studFacRatio, gradRate = split_line
+          
+        pub_priv = int(pub_priv)
         
-        # Yield this particular line, with probability p
-        if np.random.uniform() < p:
-            yield "_", name
+        yield "_", pub_priv
+        
+    def reducer(self, key, values):
+        
+        pubCount = 0
+        privCount = 0
+        
+        for public_private in values:
+            if public_private == PUBLIC_COLLEGE_CODE:
+                pubCount += 1
+            elif public_private == PRIVATE_COLLEGE_CODE:
+                privCount += 1
+            else:
+                raise Exception("Invalid public/private data entry")
+                
+        labels = ["Private", "Public", "Total"]
+        
+        d = dict(zip(labels, (privCount, pubCount, privCount + pubCount)))
+                
+        yield "College Counts", d
 
 if __name__ == '__main__':
-    MRCollegeRandomSample.run()
+    MRCollegeCount.run()

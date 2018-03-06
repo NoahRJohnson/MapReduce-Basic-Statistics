@@ -18,21 +18,36 @@ in-state tuition,out-of-state tuition, room, board,
 add. fees, estim. book costs, estim. personal $,
 % fac. w/PHD, stud./fac. ratio, Graduation rate
 '''
-class MRCollegeRandomSample(MRJob):
+
+PUBLIC_COLLEGE_CODE = 1
+PRIVATE_COLLEGE_CODE = 2
+
+class MRCollegeStratifiedSample(MRJob):
         
     
     def mapper_init(self):
-        self.numColleges = jobconf_from_env("my.job.settings.numColleges")
+        self.numPubColleges = jobconf_from_env("my.job.settings.numPubColleges")
+        self.numPrivColleges = jobconf_from_env("my.job.settings.numPrivColleges")
         
-        self.numColleges = float(self.numColleges)
+        self.numPubColleges = float(self.numPubColleges)
+        self.numPrivColleges = float(self.numPrivColleges)
 
     def mapper(self, _, line):
         
         # Expected number of observations in our sample
         N_SAMPLE = 100
         
-        # The probability we assign to each observation
-        p = float(N_SAMPLE) / self.numColleges
+        '''
+        The probability we assign to each college
+        observation within its strata. This gives
+        each observation within a particular strata
+        equal probability of being sampled. And on
+        average we expect there to be N_SAMPLE / 2
+        sample observations from each strata, combining
+        to give us a sample size of N_SAMPLE.
+        '''
+        p_pub = float(N_SAMPLE / 2) / self.numPubColleges
+        p_priv = float(N_SAMPLE / 2) / self.numPrivColleges
         
         # Use csv library to split the line on commas
         # (the library handles nasty edge cases for us)
@@ -48,9 +63,23 @@ class MRCollegeRandomSample(MRJob):
           addFees, bookCosts, personalMoney, percFacPHD, \
           studFacRatio, gradRate = split_line
         
-        # Yield this particular line, with probability p
-        if np.random.uniform() < p:
-            yield "_", name
+        pub_priv = int(pub_priv)
+        
+        if pub_priv == PUBLIC_COLLEGE_CODE:
+            
+            # Yield this particular line, with probability p_pub
+            if np.random.uniform() < p_pub:
+                yield "PUBLIC", name
+                
+        elif pub_priv == PRIVATE_COLLEGE_CODE:
+            
+            # Yield this particular line, with probability p_priv
+            if np.random.uniform() < p_priv:
+                yield "PRIVATE", name
+
+        else:
+            print line
+            raise Exception("Invalid public/private data entry")
 
 if __name__ == '__main__':
-    MRCollegeRandomSample.run()
+    MRCollegeStratifiedSample.run()
