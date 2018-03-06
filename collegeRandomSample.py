@@ -47,29 +47,8 @@ class MRCollegeRandomSample(MRJob):
           studFacRatio, gradRate = split_line
         
         # Yield this particular line, with probability p
-        if np.random.uniform() > p:
+        if np.random.uniform() < p:
             yield "_", name
-        
-    '''
-    Just collect sample observations and output them.
-    '''
-    '''
-    def reducer(self, key, values):
-
-        # both scaled by n
-        totalCov = 0
-        totalVar = 0
-        
-        for partialCov, partialVar in values:
-            totalCov += partialCov
-            totalVar += partialVar
-            
-        slope = totalCov / totalVar
-        
-        intercept = self.yMean - slope * self.xMean
-        
-        yield "Alpha, Beta", (slope, intercept)
-    '''
 
 if __name__ == '__main__':
     MRCollegeRandomSample.run()
