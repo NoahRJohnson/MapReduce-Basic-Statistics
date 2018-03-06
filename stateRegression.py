@@ -18,7 +18,7 @@ computational formulas. These formulas require the mean for
 the response and predictor. These need to be calculated first
 and passed in via the jobconf parameter.
 
-Reads in a csv file with with columns:
+Reads in a csv file with columns:
 Name, Abbreviation (Long), 2-Letter Abbreviation,
 Area (Sq. Miles), Population.
 
